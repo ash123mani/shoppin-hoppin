@@ -87,13 +87,13 @@ export const ProductCard = ({ product, onSwipe, gone }: ProductCardProps) => {
         className="indicator like-indicator"
         style={{ opacity: props.x.to(x => (x > 0 ? x / 100 : 0)) }}
       >
-                LIKE
+          LIKE      
       </animated.div>
       <animated.div
         className="indicator nope-indicator"
         style={{ opacity: props.x.to(x => (x < 0 ? -x / 100 : 0)) }}
       >
-                PASS
+        PASS
       </animated.div>
 
       <div className="product-actions">
