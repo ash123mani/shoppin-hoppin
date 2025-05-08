@@ -7,31 +7,41 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: var(--gap-medium);
 }
 
 .empty-state {
     text-align: center;
-    padding: 30px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: var(--gap-large);
+    background: var(--color-white);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-medium);
     width: 100%;
 }
 
 .empty-state p {
-    margin-bottom: 20px;
+    margin-bottom: var(--gap-medium);
     font-size: 1.2rem;
-    color: #333;
+    color: var(--color-dark-gray);
 }
 
 .empty-state button {
     padding: 12px 24px;
-    background: #5f27cd;
-    color: white;
+    background: var(--color-purple);
+    color: var(--color-white);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-pill);
     font-size: 1rem;
     cursor: pointer;
     transition: background 0.2s;
+}
+
+.empty-state button:hover {
+    background: var(--color-purple-hover);
+}
+
+@media (max-width: 480px) {
+    .card-container {
+        height: 65vh;
+    }
 }
