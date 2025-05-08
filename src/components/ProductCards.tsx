@@ -2,18 +2,20 @@ import { useState } from "react";
 
 import { ProductCard } from "./ProductCard.tsx";
 import { sampleProducts } from "../mocks/products.ts";
-import type { IProduct } from "../types";
+import type { Product, SwipeDirection } from "../types";
 
 import './ProductCards.css';
 
+export type SwipeAction = 'liked' | 'disliked';
+
 export const ProductCards = () => {
-  const [products, setProducts] = useState<IProduct[]>(sampleProducts);
+  const [products, setProducts] = useState<Product[]>(sampleProducts);
 
   const [gone] = useState<Set<number>>(() => new Set());
-  const [lastAction, setLastAction] = useState<{id: number, action: string} | null>(null);
+  const [lastAction, setLastAction] = useState<{id: Product['id'], action: SwipeAction} | null>(null);
 
-  const handleSwipe = (id: number, direction: 'left' | 'right') => {
-    const action = direction === 'right' ? 'liked' : 'disliked';
+  const handleSwipe = (id: Product['id'], direction: SwipeDirection) => {
+    const action: SwipeAction = direction === 'right' ? 'liked' : 'disliked';
     setLastAction({ id, action });
     setProducts(products.filter(product => product.id !== id));
 

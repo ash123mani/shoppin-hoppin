@@ -1,16 +1,15 @@
 import { animated, useSpring } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
 
-import type { IProduct } from "../types";
-
+import type { Product, SwipeDirection } from "../types";
 import './ProductCard.css';
 
 
 const AnimatedDiv = animated('div');
 
 interface ProductCardProps {
-  product: IProduct;
-  onSwipe: (id: number, direction: 'left' | 'right') => void;
+  product: Product;
+  onSwipe: (id: Product['id'], direction: SwipeDirection) => void;
   gone: Set<number>;
 }
 
@@ -30,7 +29,7 @@ export const ProductCard = ({ product, onSwipe, gone }: ProductCardProps) => {
 
     if (triggerSwipe) {
       const dir = xDir < 0 ? -1 : 1;
-      const swipeDirection = dir === 1 ? 'right' : 'left';
+      const swipeDirection: SwipeDirection = dir === 1 ? 'right' : 'left';
       const throwDistance = 200 + Math.min(vx * 1000, 500);
 
       gone.add(product.id);

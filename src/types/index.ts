@@ -1,4 +1,4 @@
-export interface IProduct {
+export interface Product {
     id: number;
     name: string;
     brand: string;
@@ -7,3 +7,5 @@ export interface IProduct {
     discountPercentage: number;
     imageUrl: string;
 }
+
+export type SwipeDirection = 'left' | 'right';
