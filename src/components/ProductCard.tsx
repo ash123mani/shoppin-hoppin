@@ -1,60 +1,90 @@
-import { animated, useSpring } from "@react-spring/web";
+import React from "react";
+import { to, useSpring } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
 
 import type { Product, SwipeDirection } from "../types";
+import AnimatedDiv from "./AnimatedDiv.tsx";
+
 import './ProductCard.css';
-
-
-const AnimatedDiv = animated('div');
 
 interface ProductCardProps {
   product: Product;
   onSwipe: (id: Product['id'], direction: SwipeDirection) => void;
-  gone: Set<number>;
+  gone: Set<Product['id']>;
 }
 
-export const ProductCard = ({ product, onSwipe, gone }: ProductCardProps) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onSwipe, gone }) => {
   const [props, api] = useSpring(() => ({
     x: 0,
     y: 0,
     scale: 1,
     rotate: 0,
     opacity: 1,
-    config: { tension: 300, friction: 30 }
+    config: { tension: 200, friction: 40 }
   }));
 
-  const bind = useDrag(({ active, movement: [mx], direction: [xDir], velocity: [vx], cancel }) => {
-    const xMovement = Math.abs(mx) / window.innerWidth;
-    const triggerSwipe = !active && (xMovement > 0.3 || vx > 0.5);
+  const handleSwipe = (direction: SwipeDirection) => {
+    const throwDistance = 500;
+    let animationProps = {};
 
-    if (triggerSwipe) {
-      const dir = xDir < 0 ? -1 : 1;
-      const swipeDirection: SwipeDirection = dir === 1 ? 'right' : 'left';
-      const throwDistance = 200 + Math.min(vx * 1000, 500);
-
-      gone.add(product.id);
-      api.start({
-        x: (window.innerWidth + throwDistance) * dir,
-        scale: 0.8,
-        rotate: dir * 15,
-        opacity: 0,
-        config: { tension: 200, friction: 30 },
-        onRest: () => onSwipe(product.id, swipeDirection)
-      });
+    if (direction === 'up') {
+      animationProps = {
+        y: -window.innerHeight - throwDistance,
+        rotate: -5,
+      };
     } else {
-      const scale = active ? 1.05 : 1;
-      const rotate = active ? mx / 20 : 0;
-
-      api.start({
-        x: active ? mx : 0,
-        y: 0,
-        scale,
-        rotate,
-        config: { tension: 500, friction: 30 }
-      });
-
-      if (!active && Math.abs(mx) < 5) cancel();
+      const dir = direction === 'right' ? 1 : -1;
+      animationProps = {
+        x: (window.innerWidth + throwDistance) * dir,
+        rotate: dir * 15,
+      };
     }
+
+    gone.add(product.id);
+    api.start({
+      ...animationProps,
+      scale: 0.8,
+      opacity: 0,
+      config: { tension: 200, friction: 30 },
+      onRest: () => onSwipe(product.id, direction)
+    });
+  };
+
+  const bind = useDrag(({ active, movement: [mx, my], direction: [xDir, yDir], velocity: [vx, vy] }) => {
+    const xMovement = Math.abs(mx) / window.innerWidth;
+    const yMovement = Math.abs(my) / window.innerHeight;
+
+    // Trigger swipe when released with enough velocity or distance
+    if (!active) {
+      const isVerticalSwipe = yMovement > 0.15 && vy > 0.3 && yDir < 0;
+      const isHorizontalSwipe = xMovement > 0.2 && vx > 0.3;
+
+      if (isVerticalSwipe) {
+        handleSwipe('up');
+      } else if (isHorizontalSwipe) {
+        handleSwipe(xDir > 0 ? 'right' : 'left');
+      } else {
+        // Return to center if not swiped
+        api.start({
+          x: 0,
+          y: 0,
+          rotate: 0,
+          scale: 1,
+          config: { tension: 600, friction: 30 }
+        });
+      }
+      return;
+    }
+
+    // Follow finger during drag
+    api.start({
+      x: mx,
+      y: my,
+      scale: 1.05,
+      rotate: mx / 25,
+      immediate: true,
+      config: { tension: 800, friction: 50 }
+    });
   });
 
   return (
@@ -62,11 +92,14 @@ export const ProductCard = ({ product, onSwipe, gone }: ProductCardProps) => {
       {...bind()}
       style={{
         x: props.x,
+        y: props.y,
         scale: props.scale,
         rotate: props.rotate,
         opacity: props.opacity,
         backgroundImage: `url(${product.imageUrl})`,
-        transform: props.x.to(x => `translate3d(${x}px, 0, 0)`),
+        transform: to([props.x, props.y, props.rotate], (x, y, r) =>
+          `translate3d(${x}px, ${y}px, 0) rotate(${r}deg)`
+        )
       }}
       className="product-card"
     >
@@ -86,56 +119,47 @@ export const ProductCard = ({ product, onSwipe, gone }: ProductCardProps) => {
         </div>
       </div>
 
-
       <AnimatedDiv
         className="indicator like-indicator"
-        style={{
-          opacity: props.x.to(x => (x > 0 ? x / 100 : 0))
-        }}
+        style={{ opacity: props.x.to(x => (x > 0 ? Math.min(x / 100, 1) : 0)) }}
       >
-          LIKE      
+          LIKE
       </AnimatedDiv>
       <AnimatedDiv
         className="indicator nope-indicator"
-        style={{
-          opacity: props.x.to(x => (x < 0 ? -x / 100 : 0))
-        }}
+        style={{ opacity: props.x.to(x => (x < 0 ? Math.min(-x / 100, 1) : 0)) }}
       >
-        PASS
+          PASS
+      </AnimatedDiv>
+      <AnimatedDiv
+        className="indicator cart-indicator"
+        style={{ opacity: props.y.to(y => (y < 0 ? Math.min(-y / 50, 1) : 0)) }}
+      >
+          ADD TO CART
       </AnimatedDiv>
 
       <div className="product-actions">
         <button
           className="nope"
-          onClick={() => {
-            gone.add(product.id);
-            api.start({
-              x: -500,
-              scale: 0.8,
-              rotate: -15,
-              opacity: 0,
-              onRest: () => onSwipe(product.id, 'left')
-            });
-          }}
+          onClick={() => handleSwipe('left')}
         >
           ✖
         </button>
         <button
-          className="like"
-          onClick={() => {
-            gone.add(product.id);
-            api.start({
-              x: 500,
-              scale: 0.8,
-              rotate: 15,
-              opacity: 0,
-              onRest: () => onSwipe(product.id, 'right')
-            });
-          }}
+          className="cart"
+          onClick={() => handleSwipe('up')}
         >
-          ✔
+            🛒
+        </button>
+        <button
+          className="like"
+          onClick={() => handleSwipe('right')}
+        >
+            ✔
         </button>
       </div>
     </AnimatedDiv>
   );
 };
+
+export default ProductCard;

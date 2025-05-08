@@ -9,3 +9,29 @@
     justify-content: center;
     margin-top: 20px;
 }
+
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.empty-state p {
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.empty-state button {
+    padding: 12px 24px;
+    background: #5f27cd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}

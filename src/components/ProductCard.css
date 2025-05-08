@@ -11,21 +11,22 @@
     flex-direction: column;
     justify-content: flex-end;
     overflow: hidden;
-    will-change: transform;
+    will-change: transform, opacity;
     touch-action: none;
-    user-select: none;
     cursor: grab;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
 }
 
 .product-card:active {
     cursor: grabbing;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
 
 .product-content {
     background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
     padding: 20px;
     color: white;
+    pointer-events: none;
 }
 
 .product-badge {
@@ -74,9 +75,10 @@
 
 .product-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     padding: 20px;
     background: rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
 }
 
 .product-actions button {
@@ -95,7 +97,7 @@
 }
 
 .product-actions button:active {
-    transform: scale(0.95);
+    transform: scale(0.9);
 }
 
 .product-actions button.nope {
@@ -106,19 +108,25 @@
     color: #1dd1a1;
 }
 
+.product-actions button.cart {
+    color: #5f27cd;
+}
+
 .indicator {
     position: absolute;
-    top: 50px;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
     padding: 10px 20px;
     border-radius: 10px;
     opacity: 0;
     z-index: 1;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.2s ease;
+    background-color: rgba(255, 255, 255, 0.9);
+    pointer-events: none;
 }
 
 .like-indicator {
+    top: 50px;
     right: 20px;
     color: #1dd1a1;
     border: 3px solid #1dd1a1;
@@ -126,72 +134,44 @@
 }
 
 .nope-indicator {
+    top: 50px;
     left: 20px;
     color: #ff6b6b;
     border: 3px solid #ff6b6b;
     transform: rotate(-15deg);
 }
 
-.empty-state {
-    text-align: center;
-    padding: 30px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    width: 100%;
+.cart-indicator {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #5f27cd;
+    border: 3px solid #5f27cd;
 }
 
-.empty-state p {
-    margin-bottom: 20px;
-    font-size: 1.2rem;
-    color: #333;
-}
-
-.empty-state button {
-    padding: 12px 24px;
-    background: #5f27cd;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.2s;
-}
 
 .empty-state button:hover {
     background: #4a1da8;
 }
 
-.action-feedback {
-    position: fixed;
-    top: 50%;
-    z-index: 100;
-    font-size: 2rem;
-    font-weight: bold;
-    padding: 20px 40px;
-    border-radius: 10px;
-    opacity: 0;
-    animation: fadeInOut 1.2s ease-in-out;
-    transform: translateY(-50%);
-}
-
-.action-feedback.liked {
-    color: #1dd1a1;
-    border: 4px solid #1dd1a1;
-    right: 50px;
-}
-
-.action-feedback.disliked {
-    color: #ff6b6b;
-    border: 4px solid #ff6b6b;
-    left: 50px;
-}
 
 @keyframes fadeInOut {
-    0% { opacity: 0; transform: translateY(-50%) scale(0.5); }
-    20% { opacity: 1; transform: translateY(-50%) scale(1.1); }
-    80% { opacity: 1; transform: translateY(-50%) scale(1.1); }
-    100% { opacity: 0; transform: translateY(-50%) scale(0.5); }
+    0% {
+        opacity: 0;
+        transform: translateY(-50%) scale(0.5);
+    }
+    20% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1.1);
+    }
+    80% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-50%) scale(0.5);
+    }
 }
 
 @media (max-width: 480px) {
@@ -206,5 +186,16 @@
     .action-feedback {
         font-size: 1.5rem;
         padding: 15px 30px;
+    }
+
+    .indicator {
+        font-size: 1.5rem;
+        padding: 8px 16px;
+    }
+
+    .product-actions button {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
     }
 }

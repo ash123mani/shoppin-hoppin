@@ -8,4 +8,4 @@ export interface Product {
     imageUrl: string;
 }
 
-export type SwipeDirection = 'left' | 'right';
+export type SwipeDirection = 'left' | 'right' | 'up';
