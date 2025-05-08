@@ -1,4 +1,6 @@
-export const sampleProducts = [
+import type { IProduct } from "../types";
+
+export const sampleProducts: IProduct[] = [
   {
     id: 1,
     name: "floral print v-neck top",

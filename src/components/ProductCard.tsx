@@ -1,12 +1,17 @@
-import {animated, useSpring} from "@react-spring/web";
-import {useDrag} from "@use-gesture/react";
+import { animated, useSpring } from "@react-spring/web";
+import { useDrag } from "@use-gesture/react";
 
-import type {ProductType} from "./App.tsx";
+import type { IProduct } from "../types";
+
+import './ProductCard.css';
+
+
+const AnimatedDiv = animated('div');
 
 interface ProductCardProps {
-    product: ProductType;
-    onSwipe: (id: number, direction: 'left' | 'right') => void;
-    gone: Set<number>;
+  product: IProduct;
+  onSwipe: (id: number, direction: 'left' | 'right') => void;
+  gone: Set<number>;
 }
 
 export const ProductCard = ({ product, onSwipe, gone }: ProductCardProps) => {
@@ -54,8 +59,7 @@ export const ProductCard = ({ product, onSwipe, gone }: ProductCardProps) => {
   });
 
   return (
-  // @ts-expect-error, givers error even without children prop
-    <animated.div
+    <AnimatedDiv
       {...bind()}
       style={{
         x: props.x,
@@ -83,18 +87,23 @@ export const ProductCard = ({ product, onSwipe, gone }: ProductCardProps) => {
         </div>
       </div>
 
-      <animated.div
+
+      <AnimatedDiv
         className="indicator like-indicator"
-        style={{ opacity: props.x.to(x => (x > 0 ? x / 100 : 0)) }}
+        style={{
+          opacity: props.x.to(x => (x > 0 ? x / 100 : 0))
+        }}
       >
           LIKE      
-      </animated.div>
-      <animated.div
+      </AnimatedDiv>
+      <AnimatedDiv
         className="indicator nope-indicator"
-        style={{ opacity: props.x.to(x => (x < 0 ? -x / 100 : 0)) }}
+        style={{
+          opacity: props.x.to(x => (x < 0 ? -x / 100 : 0))
+        }}
       >
         PASS
-      </animated.div>
+      </AnimatedDiv>
 
       <div className="product-actions">
         <button
@@ -110,7 +119,7 @@ export const ProductCard = ({ product, onSwipe, gone }: ProductCardProps) => {
             });
           }}
         >
-                    ✖
+          ✖
         </button>
         <button
           className="like"
@@ -125,9 +134,9 @@ export const ProductCard = ({ product, onSwipe, gone }: ProductCardProps) => {
             });
           }}
         >
-                    ✔
+          ✔
         </button>
       </div>
-    </animated.div>
+    </AnimatedDiv>
   );
 };

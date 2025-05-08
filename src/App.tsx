@@ -1,16 +1,6 @@
 import './App.css';
 
-import {ProductCards} from "./ProductCards.tsx";
-
-export interface ProductType {
-  id: number;
-  name: string;
-  brand: string;
-  price: number;
-  originalPrice: number;
-  discountPercentage: number;
-  imageUrl: string;
-}
+import { ProductCards } from "./components/ProductCards.tsx";
 
 const App = () => {
   return (
