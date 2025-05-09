@@ -11,8 +11,6 @@ import './ProductCards.css';
 const ProductCards = () => {
   const [products, setProducts] = useState<Product[]>(sampleProducts);
 
-  const [gone] = useState<Set<Product['id']>>(() => new Set());
-
   const handleSwipe = (id: Product['id'], direction: SwipeDirection) => {
     logProduct(direction, id);
     setProducts(products.filter(product => product.id !== id));
@@ -29,7 +27,6 @@ const ProductCards = () => {
           key={product.id}
           product={product}
           onSwipe={handleSwipe}
-          gone={gone}
         />
       ))}
       {products.length === 0 && (

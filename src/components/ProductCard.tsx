@@ -10,10 +10,9 @@ import './ProductCard.css';
 interface ProductCardProps {
   product: Product;
   onSwipe: (id: Product['id'], direction: SwipeDirection) => void;
-  gone: Set<Product['id']>;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onSwipe, gone }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onSwipe }) => {
   const [props, api] = useSpring(() => ({
     x: 0,
     y: 0,
@@ -40,7 +39,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSwipe, gone }) => 
       };
     }
 
-    gone.add(product.id);
     api.start({
       ...animationProps,
       scale: 0.8,
