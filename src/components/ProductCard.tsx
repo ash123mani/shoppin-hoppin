@@ -7,6 +7,10 @@ import AnimatedDiv from "./AnimatedDiv.tsx";
 
 import './ProductCard.css';
 
+const SWIPE_TENSION = 200;
+const SWIPE_FRICTION = 20;
+const SWIPE_VELOCITY = 0.3;
+
 interface ProductCardProps {
   product: Product;
   onSwipe: (id: Product['id'], direction: SwipeDirection) => void;
@@ -19,7 +23,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSwipe }) => {
     scale: 1,
     rotate: 0,
     opacity: 1,
-    config: { tension: 200, friction: 40 }
+    config: { tension: SWIPE_TENSION, friction: SWIPE_FRICTION }
   }));
 
   const handleSwipe = (direction: SwipeDirection) => {
@@ -43,7 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSwipe }) => {
       ...animationProps,
       scale: 0.8,
       opacity: 0,
-      config: { tension: 200, friction: 30 },
+      config: { tension: SWIPE_TENSION, friction: SWIPE_FRICTION },
       onRest: () => onSwipe(product.id, direction)
     });
   };
@@ -54,8 +58,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSwipe }) => {
 
     // Trigger swipe when released with enough velocity or distance
     if (!active) {
-      const isVerticalSwipe = yMovement > 0.15 && vy > 0.3 && yDir < 0;
-      const isHorizontalSwipe = xMovement > 0.2 && vx > 0.3;
+      const isVerticalSwipe = yMovement > 0.15 && vy > SWIPE_VELOCITY && yDir < 0;
+      const isHorizontalSwipe = xMovement > 0.2 && vx > SWIPE_VELOCITY;
 
       if (isVerticalSwipe) {
         handleSwipe('up');
@@ -68,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSwipe }) => {
           y: 0,
           rotate: 0,
           scale: 1,
-          config: { tension: 600, friction: 30 }
+          config: { tension: SWIPE_TENSION, friction: SWIPE_FRICTION }
         });
       }
       return;
@@ -81,7 +85,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onSwipe }) => {
       scale: 1.05,
       rotate: mx / 25,
       immediate: true,
-      config: { tension: 800, friction: 50 }
+      config: { tension: SWIPE_TENSION, friction: SWIPE_FRICTION }
     });
   });
 
